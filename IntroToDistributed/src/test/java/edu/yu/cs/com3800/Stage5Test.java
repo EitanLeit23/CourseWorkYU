@@ -78,6 +78,16 @@ public class Stage5Test {
                 "}";
     }
 
+    public void shutdownAll(ArrayList<PeerServer> servers){
+        for(PeerServer p : servers){
+            p.shutdown();
+        }
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+        }
+    }
+
     @Test
     public void simpleTest() throws IOException, InterruptedException {
         LinkedBlockingQueue<Message> outgoingMessages = new LinkedBlockingQueue<>();
@@ -225,25 +235,26 @@ public class Stage5Test {
         System.out.println(response.body());
         System.out.println(response.statusCode());
         System.out.println(response.headers());
+        shutdownAll(servers);
     }
     @Test
     public void manyClientsTest() throws IOException, InterruptedException {
         LinkedBlockingQueue<Message> outgoingMessages = new LinkedBlockingQueue<>();
         LinkedBlockingQueue<Message> incomingMessages = new LinkedBlockingQueue<>();
-        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9999), 9999, null);
-        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9999);
+        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9899), 9899, null);
+        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9899);
 
         //create IDs and addresses
         HashMap<Long, InetSocketAddress> peerIDtoAddress = new HashMap<>();
-        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8010));
-        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8020));
-        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8030));
-        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8040));
-        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8050));
-        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8060));
-        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8070));
-        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8080));
-        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8090));
+        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8110));
+        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8120));
+        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8130));
+        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8140));
+        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8150));
+        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8160));
+        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8170));
+        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8180));
+        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8190));
 
         //create servers
         ArrayList<PeerServer> servers = new ArrayList<>(3);
@@ -253,8 +264,8 @@ public class Stage5Test {
             if (i == peerIDtoAddress.size() - 1) {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 //map.remove(entry.getKey());
-                gatewayServer = new GatewayServer(8888, 8090, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
-                new Thread(gatewayServer, "Server on port " + 8090).start();
+                gatewayServer = new GatewayServer(8788, 8190, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
+                new Thread(gatewayServer, "Server on port " + 8190).start();
             } else {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 map.remove(entry.getKey());
@@ -286,29 +297,29 @@ public class Stage5Test {
         CountDownLatch latch = new CountDownLatch(threadNum);
         for(int j = 0; j < threadNum; j++) {
             String message = this.validSrc.replace("World!", "World! from code version " + j);
-            new HttpClientThread(8888, message, j, latch).start();
+            new HttpClientThread(8788, message, j, latch).start();
         }
         latch.await();
-
+        shutdownAll(servers);
     }
     @Test
     public void gossipTest() throws IOException {
         LinkedBlockingQueue<Message> outgoingMessages = new LinkedBlockingQueue<>();
         LinkedBlockingQueue<Message> incomingMessages = new LinkedBlockingQueue<>();
-        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9999), 9999, null);
-        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9999);
+        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9799), 9799, null);
+        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9799);
 
         //create IDs and addresses
         HashMap<Long, InetSocketAddress> peerIDtoAddress = new HashMap<>();
-        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8010));
-        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8020));
-        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8030));
-        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8040));
-        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8050));
-        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8060));
-        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8070));
-        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8080));
-        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8090));
+        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8210));
+        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8220));
+        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8230));
+        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8240));
+        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8250));
+        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8260));
+        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8270));
+        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8280));
+        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8290));
 
         //create servers
         ArrayList<PeerServer> servers = new ArrayList<>(3);
@@ -318,8 +329,8 @@ public class Stage5Test {
             if (i == peerIDtoAddress.size() - 1) {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 //map.remove(entry.getKey());
-                gatewayServer = new GatewayServer(8888, 8090, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
-                new Thread(gatewayServer, "Server on port " + 8090).start();
+                gatewayServer = new GatewayServer(8688, 8290, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
+                new Thread(gatewayServer, "Server on port " + 8290).start();
             } else {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 map.remove(entry.getKey());
@@ -359,25 +370,26 @@ public class Stage5Test {
             Thread.sleep(30000);
         } catch (Exception e) {
         }
+        shutdownAll(servers);        
     }
     @Test
     public void workerFail() throws IOException, InterruptedException {
         LinkedBlockingQueue<Message> outgoingMessages = new LinkedBlockingQueue<>();
         LinkedBlockingQueue<Message> incomingMessages = new LinkedBlockingQueue<>();
-        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9999), 9999, null);
-        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9999);
+        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9699), 9699, null);
+        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9699);
 
         //create IDs and addresses
         HashMap<Long, InetSocketAddress> peerIDtoAddress = new HashMap<>();
-        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8010));
-        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8020));
-        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8030));
-        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8040));
-        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8050));
-        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8060));
-        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8070));
-        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8080));
-        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8090));
+        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8310));
+        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8320));
+        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8330));
+        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8340));
+        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8350));
+        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8360));
+        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8370));
+        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8380));
+        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8390));
 
         //create servers
         ArrayList<PeerServer> servers = new ArrayList<>(3);
@@ -387,8 +399,8 @@ public class Stage5Test {
             if (i == peerIDtoAddress.size() - 1) {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 //map.remove(entry.getKey());
-                gatewayServer = new GatewayServer(8888, 8090, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
-                new Thread(gatewayServer, "Server on port " + 8090).start();
+                gatewayServer = new GatewayServer(8588, 8390, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
+                new Thread(gatewayServer, "Server on port " + 8390).start();
             } else {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 map.remove(entry.getKey());
@@ -421,7 +433,7 @@ public class Stage5Test {
         CountDownLatch latch = new CountDownLatch(threadNum);
         for(int j = 0; j < threadNum; j++) {
             String message = this.validSrc.replace("World!", "World! from code version " + j);
-            new HttpClientThread(8888, message, j, latch).start();
+            new HttpClientThread(8588, message, j, latch).start();
         }
         latch.await();
 
@@ -436,28 +448,29 @@ public class Stage5Test {
         latch = new CountDownLatch(threadNum);
         for(int j = 0; j < threadNum; j++) {
             String message = this.validSrc.replace("World!", "World! from code version " + j + ".2");
-            new HttpClientThread(8888, message, j, latch).start();
+            new HttpClientThread(8588, message, j, latch).start();
         }
         latch.await();
+        shutdownAll(servers);        
     }
     @Test
     public void LeaderFailure() throws InterruptedException, IOException {
         LinkedBlockingQueue<Message> outgoingMessages = new LinkedBlockingQueue<>();
         LinkedBlockingQueue<Message> incomingMessages = new LinkedBlockingQueue<>();
-        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9999), 9999, null);
-        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9999);
+        UDPMessageReceiver receiver = new UDPMessageReceiver(incomingMessages, new InetSocketAddress("localhost", 9599), 9599, null);
+        UDPMessageSender sender = new UDPMessageSender(outgoingMessages, 9599);
 
         //create IDs and addresses
         HashMap<Long, InetSocketAddress> peerIDtoAddress = new HashMap<>();
-        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8010));
-        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8020));
-        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8030));
-        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8040));
-        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8050));
-        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8060));
-        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8070));
-        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8080));
-        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8090));
+        peerIDtoAddress.put(1L, new InetSocketAddress("localhost", 8410));
+        peerIDtoAddress.put(2L, new InetSocketAddress("localhost", 8420));
+        peerIDtoAddress.put(3L, new InetSocketAddress("localhost", 8430));
+        peerIDtoAddress.put(4L, new InetSocketAddress("localhost", 8440));
+        peerIDtoAddress.put(5L, new InetSocketAddress("localhost", 8450));
+        peerIDtoAddress.put(6L, new InetSocketAddress("localhost", 8460));
+        peerIDtoAddress.put(7L, new InetSocketAddress("localhost", 8470));
+        peerIDtoAddress.put(8L, new InetSocketAddress("localhost", 8480));
+        peerIDtoAddress.put(9L, new InetSocketAddress("localhost", 8490));
 
         //create servers
         ArrayList<PeerServer> servers = new ArrayList<>(3);
@@ -467,8 +480,8 @@ public class Stage5Test {
             if (i == peerIDtoAddress.size() - 1) {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 //map.remove(entry.getKey());
-                gatewayServer = new GatewayServer(8888, 8090, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
-                new Thread(gatewayServer, "Server on port " + 8090).start();
+                gatewayServer = new GatewayServer(8488, 8490, 0, entry.getKey(), new ConcurrentHashMap<>(map), 1);
+                new Thread(gatewayServer, "Server on port " + 8490).start();
             } else {
                 HashMap<Long, InetSocketAddress> map = (HashMap<Long, InetSocketAddress>) peerIDtoAddress.clone();
                 map.remove(entry.getKey());
@@ -501,7 +514,7 @@ public class Stage5Test {
         CountDownLatch latch = new CountDownLatch(threadNum);
         for(int j = 0; j < threadNum; j++) {
             String message = this.validSrc.replace("World!", "World! from code version " + j);
-            new HttpClientThread(8888, message, j, latch).start();
+            new HttpClientThread(8488, message, j, latch).start();
         }
         latch.await();
 
@@ -521,9 +534,10 @@ public class Stage5Test {
         latch = new CountDownLatch(threadNum);
         for(int j = 0; j < threadNum; j++) {
             String message = this.validSrc.replace("World!", "World! from code version " + j + ".2");
-            new HttpClientThread(8888, message, j, latch).start();
+            new HttpClientThread(8488, message, j, latch).start();
         }
         latch.await();
+        shutdownAll(servers);        
     }
 
     private class HttpClientThread extends Thread {
@@ -542,7 +556,7 @@ public class Stage5Test {
         @Override
         public void run() {
             try {
-                URL url = new URL("http", "localhost", 8888, "/compileandrun");
+                URL url = new URL("http", "localhost", this.httpPort, "/compileandrun");
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url.toString()))
@@ -555,6 +569,7 @@ public class Stage5Test {
                 this.latch.countDown();
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
+                this.latch.countDown();
             }
         }
     }

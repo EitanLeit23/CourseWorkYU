@@ -1,4 +1,5 @@
 package edu.yu.cs.com3800.stage5;
+package edu.yu.cs.com3800.stage5;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -62,7 +63,7 @@ public class GossipThread extends Thread implements GossipLoggingServer {
         this.scheduledExecutorService = Executors.newScheduledThreadPool(1);
         this.myPort = this.myPeerServer.getAddress().getPort();
         try {
-            this.verboseLogger = initializeLogging(GossipThread.class.getCanonicalName() + "-verbose-on-port-" + myPort);
+            this.verboseLogger = initializeLogging(GossipThread.class.getCanonicalName() + "-verbose-on-port-" + myPort, true);
             this.summaryLogger = initializeLogging(GossipThread.class.getCanonicalName() + "-summary-on-port-" + myPort);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -161,7 +162,7 @@ public class GossipThread extends Thread implements GossipLoggingServer {
                        else{
                             this.gossipMap.put(idInQuestion, heartBeatForID);
                             this.peerIDtoTime.put(idInQuestion, receivedTime);
-                            this.summaryLogger.info(this.myID + ": updated " + idInQuestion + "'s heartbeat sequence to " + heartBeatForID + " based on message from " + this.addressToId.get(new InetSocketAddress(message.getSenderHost(), message.getSenderPort())) + " at node time " + receivedTime);
+                           // this.summaryLogger.info(this.myID + ": updated " + idInQuestion + "'s heartbeat sequence to " + heartBeatForID + " based on message from " + this.addressToId.get(new InetSocketAddress(message.getSenderHost(), message.getSenderPort())) + " at node time " + receivedTime);
                        }
                    }
                 }

@@ -18,7 +18,7 @@ public class UDPMessageReceiver extends Thread implements LoggingServer {
         this.incomingMessages = incomingMessages;
         this.myAddress = myAddress;
         this.myPort = myPort;
-        this.logger = initializeLogging(UDPMessageReceiver.class.getCanonicalName() + "-on-port-" + this.myPort);
+        this.logger = initializeLogging(UDPMessageReceiver.class.getCanonicalName() + "-on-port-" + this.myPort, true);
         this.setDaemon(true);
         this.peerServer = peerServer;
         setName("UDPMessageReceiver-port-" + this.myPort);
